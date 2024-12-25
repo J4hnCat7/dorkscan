@@ -50,7 +50,7 @@ python dorkscan.py -u example.com --script sql_injection_scan
 
 Scripts are located in the `scripts` folder and must be in text format containing dorks. For example:
 
-`sql_injection_scan.txt`:
+`sql_injection_scan`:
 ```text
 site:{url} inurl:".php?" inurl:"=" -site:php.net -site:phpmyadmin.net
 ```
