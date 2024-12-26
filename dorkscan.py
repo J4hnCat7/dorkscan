@@ -26,7 +26,7 @@ def list_scripts():
         print(f"{Fore.RED}A pasta 'scripts' não existe ou não foi encontrada.")
 
 # Função para buscar resultados no Google
-def fetch_results(query):
+def fetch_results(query, show_all=False):
     """Função para buscar os resultados diretamente da pesquisa do Google e exibir de forma compacta."""
     url = f"https://www.google.com/search?q={query}"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -37,31 +37,44 @@ def fetch_results(query):
         return
     
     soup = BeautifulSoup(response.text, "html.parser")
-    results = soup.find_all('h3')
-
-    # Exibindo os resultados de forma compacta
-    if results:
-        print(f"\n{Fore.GREEN}Resultados encontrados:")
-        for result in results:
-            link_tag = result.find_parent('a')
-            link = link_tag['href']
-            
-            # Corrige o link para obter a URL real (sem parâmetros adicionais)
-            if link.startswith("/url?q="):
-                # Extrai o valor de q= e remove parâmetros extras após o primeiro '&'
-                link = link[7:]  # Remove "/url?q="
-                link = link.split('&')[0]  # Remove qualquer parâmetro após o primeiro "&"
-            
-            # Decodifica a URL para remover a codificação de caracteres especiais
-            link = urllib.parse.unquote(link)
-            
-            title = result.get_text()
-            print(f"{Fore.YELLOW}{title}: {Fore.CYAN}{link}")
+    
+    if show_all:
+        # Mostra todos os links encontrados
+        links = soup.find_all('a')
+        if links:
+            print(f"\n{Fore.GREEN}Todos os links encontrados:")
+            for link_tag in links:
+                link = link_tag.get('href')
+                if link and link.startswith("/url?q="):
+                    # Extrai o valor de q= e remove parâmetros extras após o primeiro '&'
+                    link = link[7:]  # Remove "/url?q="
+                    link = link.split('&')[0]  # Remove qualquer parâmetro após o primeiro "&"
+                    link = urllib.parse.unquote(link)  # Decodifica a URL
+                    print(f"{Fore.CYAN}{link}")
+        else:
+            print(f"{Fore.YELLOW}Nenhum link encontrado para a pesquisa.")
     else:
-        print(f"{Fore.YELLOW}Nenhum resultado encontrado para a pesquisa.")
+        # Mostra apenas os links com títulos
+        results = soup.find_all('h3')
+        if results:
+            print(f"\n{Fore.GREEN}Resultados encontrados:")
+            for result in results:
+                link_tag = result.find_parent('a')
+                link = link_tag['href']
+                
+                if link.startswith("/url?q="):
+                    # Extrai o valor de q= e remove parâmetros extras após o primeiro '&'
+                    link = link[7:]  # Remove "/url?q="
+                    link = link.split('&')[0]  # Remove qualquer parâmetro após o primeiro "&"
+                    link = urllib.parse.unquote(link)  # Decodifica a URL
+                
+                title = result.get_text()
+                print(f"{Fore.YELLOW}{title}: {Fore.CYAN}{link}")
+        else:
+            print(f"{Fore.YELLOW}Nenhum resultado encontrado para a pesquisa.")
 
 # Função para executar o script de dork
-def execute_script(script_file, url):
+def execute_script(script_file, url, filetype=None, inurl=None, intitle=None, intext=None, show_all=False):
     scripts_folder = 'scripts'
     script_path = os.path.join(scripts_folder, script_file)
     
@@ -76,6 +89,16 @@ def execute_script(script_file, url):
             return
         script_content = script_content.replace("{url}", url)
     
+    # Adiciona parâmetros adicionais
+    if filetype:
+        script_content += f" filetype:{filetype}"
+    if inurl:
+        script_content += f" inurl:{inurl}"
+    if intitle:
+        script_content += f" intitle:{intitle}"
+    if intext:
+        script_content += f" intext:{intext}"
+    
     print(f"\n{Fore.YELLOW}Executando script: {script_file}\n{Fore.CYAN}{script_content}")
     
     # Realizando a busca no Google com o conteúdo do script
@@ -88,28 +111,7 @@ def execute_script(script_file, url):
         return
     
     soup = BeautifulSoup(response.text, "html.parser")
-    results = soup.find_all('h3')
-
-    # Exibindo os resultados de forma compacta
-    if results:
-        print(f"\n{Fore.GREEN}Resultados encontrados:")
-        for result in results:
-            link_tag = result.find_parent('a')
-            link = link_tag['href']
-            
-            # Corrige o link para obter a URL real (sem parâmetros adicionais)
-            if link.startswith("/url?q="):
-                # Extrai o valor de q= e remove parâmetros extras após o primeiro '&'
-                link = link[7:]  # Remove "/url?q="
-                link = link.split('&')[0]  # Remove qualquer parâmetro após o primeiro "&"
-            
-            # Decodifica a URL para remover a codificação de caracteres especiais
-            link = urllib.parse.unquote(link)
-            
-            title = result.get_text()
-            print(f"{Fore.YELLOW}{title}: {Fore.CYAN}{link}")
-    else:
-        print(f"{Fore.YELLOW}Nenhum resultado encontrado para o dork.")
+    fetch_results(script_content, show_all)
 
 def main():
     parser = argparse.ArgumentParser(description="Dorkscan: uma ferramenta para buscas avançadas no Google usando dorks.")
@@ -118,8 +120,9 @@ def main():
     parser.add_argument("--inurl", type=str, help="Especifica uma string que deve estar presente na URL (ex.: admin, login, etc.)")
     parser.add_argument("--intitle", type=str, help="Especifica uma string que deve estar no título da página")
     parser.add_argument("--intext", type=str, help="Especifica uma string que deve estar no conteúdo da página")
-    parser.add_argument("--script", "-sC", type=str, help="Executa um script predefinido de scan")
+    parser.add_argument("--script", "-sC", type=str, help="Executa um script predefinido de busca (ex.: sql_injection_scan)")
     parser.add_argument("--list", "-l", action="store_true", help="Lista todos os scripts disponíveis")
+    parser.add_argument("--all", "-a", action="store_true", help="Mostra todos os links encontrados na pesquisa")
 
     args = parser.parse_args()
 
@@ -130,10 +133,15 @@ def main():
 
     # Se o usuário especificar um script para executar
     if args.script:
-        if args.url:
-            execute_script(args.script, args.url)
-        else:
-            print(f"{Fore.RED}Erro: O script '{args.script}' requer o parâmetro --url.")
+        execute_script(
+            args.script,
+            url=args.url,
+            filetype=args.file,
+            inurl=args.inurl,
+            intitle=args.intitle,
+            intext=args.intext,
+            show_all=args.all
+        )
         return
 
     # Se a URL não for especificada, mostre um erro para buscas simples
@@ -156,8 +164,7 @@ def main():
     print(f"{Fore.YELLOW}Iniciando busca com o dork: {query.strip()}\n")
 
     # Buscar e exibir resultados
-    fetch_results(query.strip())
+    fetch_results(query.strip(), show_all=args.all)
 
 if __name__ == "__main__":
     main()
-
