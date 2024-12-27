@@ -1,6 +1,6 @@
 # Dorkscan
 
-Dorkscan is an advanced Google scanning tool that uses dorks to find specific information and potential security vulnerabilities. Ideal for security professionals, pentesters and enthusiasts in the field, it allows you to customize searches and execute predefined scripts to automate tasks.
+Dorkscan is en advanced Google scanning tool that uses dorks to find specific information and potential security vulnerabilities. Ideal for security professionals, pentesters and enthusiasts in the field, it allows you to customize searches and execute predefined scripts to automate tasks.
 
 ## Main Features
 - **Custom Search**: Use filters such as `site:`, `filetype:`, `inurl:`, `intitle:`, among others.
