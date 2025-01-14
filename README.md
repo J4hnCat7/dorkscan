@@ -16,7 +16,7 @@ To install DorkScan, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/j4hncat7/dorkscan.git
+   git clone https://github.com/J4hnCat7/Dorkscan.git
    cd dorkscan
    ```
 
