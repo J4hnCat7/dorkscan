@@ -88,17 +88,17 @@ The `scripts` folder contains predefined scripts that can be executed using the 
 
 ### Example Script Content
 
-An example script inside the `scripts` folder (e.g., `example_script.txt`) could contain:
+An example script inside the `scripts` folder (e.g., `example_script`) could contain:
 ```
 site:example.com filetype:pdf
 ```
 
 ## Example Script Execution
 
-1. Create a script inside the `scripts` folder (e.g., `example_script.txt`) with a search query.
+1. Create a script inside the `scripts` folder (e.g., `example_script`) with a search query.
 2. Run the script with the `-s` flag:
    ```bash
-   python dorkscan.py -e google -s example_script.txt
+   python dorkscan.py -e google -s example_script
    ```
 
 ## Requirements
