@@ -1,64 +1,112 @@
-# Dorkscan
+# DorkScan
 
-Dorkscan is en advanced Google scanning tool that uses dorks to find specific information and potential security vulnerabilities. Ideal for security professionals, pentesters and enthusiasts in the field, it allows you to customize searches and execute predefined scripts to automate tasks.
+DorkScan is an advanced tool for searching using Google and Bing dorks. With DorkScan, you can perform complex searches that include specific filters such as `site:`, `filetype:`, `inurl:`, `intitle:`, and `intext:`, among others. The tool allows you to execute predefined search queries from scripts stored in the `scripts` folder, list available scripts, and run searches across multiple pages efficiently using multithreading.
 
-## Main Features
-- **Custom Search**: Use filters such as `site:`, `filetype:`, `inurl:`, `intitle:`, among others.
-- **Script Execution**: Automate specific searches with predefined scripts (e.g.: SQL Injection, XSS).
-- **Script List**: Display all available scripts in the `scripts` folder.
-- **Compact Results**: Displays links in an organized and clean way.
+## What Does DorkScan Do?
+
+- **Advanced Search**: Perform complex Google and Bing searches with various filters such as `site:`, `filetype:`, `inurl:`, `intitle:`, and `intext:`.
+- **Multithreaded**: It uses Python's `multiprocessing` library to perform searches efficiently across multiple pages.
+- **Script Execution**: You can execute predefined queries stored as scripts in the `scripts` folder.
+- **List Available Scripts**: View all scripts available in the `scripts` folder for easy execution.
+- **Search Results**: Display the results of your search query in a readable format with links to relevant URLs.
 
 ## Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/dorkscan.git
-cd dorkscan
-```
+To install DorkScan, follow these steps:
 
-2. Install the requirements:
-```bash
-pip install -r requirements.txt
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/dorkscan.git
+   cd dorkscan
+   ```
+
+2. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Ensure you have Python 3.x installed.
 
 ## Usage
 
-### Basic Commands
+To use DorkScan, run the script with the desired parameters. You can choose the search engine, add filters, execute scripts, and more.
 
-- **Help**:
+### Help
+
+To display the help message and see all available options:
 ```bash
 python dorkscan.py -h
 ```
 
-- **Simple Search**:
-```bash
-python dorkscan.py -u example.com --file pdf --inurl admin
-```
-This will search for PDFs on the site `example.com` containing "admin" in the URL.
+### Example Commands
 
-- **List Available Scripts**:
-```bash
-python dorkscan.py --list
-```
+Here are some example commands you can use:
 
-- **Run Predefined Script**:
+#### Basic Search Example
+
+To perform a basic Google search for PDF files on `example.com`:
 ```bash
-python dorkscan.py -u example.com --script sql_injection_scan
+python dorkscan.py -e google -u example.com -F pdf
 ```
 
-## Usage Example
+#### Search with Multiple Filters
 
-1. List available scripts:
+To search Bing for pages with the word "login" in the URL and "admin" in the title:
 ```bash
-python dorkscan.py --list
+python dorkscan.py -e bing -u example.com --inurl login --intitle admin
 ```
 
-2. Run a script with URL:
+#### Execute a Script
+
+To execute a predefined script (e.g., `script_name.txt`) from the `scripts` folder:
 ```bash
-python dorkscan.py -u example.com --script sql_injection_scan
+python dorkscan.py -e google -s script_name.txt
 ```
 
-3. Advanced custom search:
+#### List Available Scripts
+
+To list all available scripts in the `scripts` folder:
 ```bash
-python dorkscan.py -u example.com --file pdf --intitle "Report" --inurl admin
+python dorkscan.py -l
+```
+
+### Available Options
+
+- `-u URL` or `--url`: Specify a URL to restrict the search to that site (e.g., `site:example.com`).
+- `-F FILE` or `--file`: Specify the file type (e.g., `filetype:pdf`).
+- `--inurl`: Search for keywords in the URL.
+- `--intitle`: Search for keywords in the title of the page.
+- `--intext`: Search for keywords in the page content.
+- `-e ENGINE` or `--engine`: Specify the search engine (`google` or `bing`).
+- `-p PAGES` or `--pages`: Specify the number of pages to scrape.
+- `-s SCRIPT` or `--script`: Execute a script from the `scripts` folder.
+- `-l` or `--list`: List all available scripts in the `scripts` folder.
+
+## Folder Structure
+
+The `scripts` folder contains predefined scripts that can be executed using the `-s` or `--script` flag. Each script should contain a valid search query.
+
+### Example Script Content
+
+An example script inside the `scripts` folder (e.g., `example_script.txt`) could contain:
+```
+site:example.com filetype:pdf
+```
+
+## Example Script Execution
+
+1. Create a script inside the `scripts` folder (e.g., `example_script.txt`) with a search query.
+2. Run the script with the `-s` flag:
+   ```bash
+   python dorkscan.py -e google -s example_script.txt
+   ```
+
+## Requirements
+
+- Python 3.x
+- Required Python libraries: `requests`, `beautifulsoup4`, `argparse`
+
+To install the dependencies:
+```bash
+pip install -r requirements.txt
 ```
