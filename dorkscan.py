@@ -18,7 +18,7 @@ class DorkScan:
         self.intext = self.args.intext
         self.pages = self.args.pages
         self.script = self.args.script
-        self.list_scripts_flag = self.args.list  # Renomeando o atributo
+        self.list_scripts_flag = self.args.list 
 
     def _parse_args(self):
         parser = argparse.ArgumentParser(description="DorkScan: A tool for advanced Google and Bing searches.")
